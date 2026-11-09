@@ -1,0 +1,523 @@
+{
+    "info":  {
+                 "_postman_id":  "bd0fba7e-2e60-4f37-9251-badc0ffee001",
+                 "name":  "Banco Digital API",
+                 "description":  "Fluxo de autenticação, clientes, contas, operações e auditoria via gateway.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "value":  "http://localhost:8080"
+                     },
+                     {
+                         "key":  "tokenFuncionario",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "tokenCliente",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "tokenClienteB",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "clienteId",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "contaA",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "contaB",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "adminEmail",
+                         "value":  "admin@banco.mz"
+                     },
+                     {
+                         "key":  "adminPassword",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "pin",
+                         "value":  "1234"
+                     },
+                     {
+                         "key":  "pinNovo",
+                         "value":  "5678"
+                     },
+                     {
+                         "key":  "numeroBi",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "telefone",
+                         "value":  ""
+                     }
+                 ],
+    "item":  [
+                 {
+                     "name":  "Autenticação",
+                     "item":  [
+                                  {
+                                      "name":  "Login funcionário",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Login funcionário responde 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const body = pm.response.json();",
+                                                                                    "pm.collectionVariables.set(\u0027tokenFuncionario\u0027, body.token);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"username\":\"{{adminEmail}}\",\"password\":\"{{adminPassword}}\"}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/login/funcionario"
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Clientes e contas",
+                     "item":  [
+                                  {
+                                      "name":  "Criar cliente",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Cliente criado\u0027, function () { pm.response.to.have.status(201); });",
+                                                                                    "pm.collectionVariables.set(\u0027clienteId\u0027, pm.response.json().id);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"nome\":\"Cliente de Teste\",\"numeroBi\":\"{{numeroBi}}\",\"telefone\":\"{{telefone}}\",\"email\":\"cliente@example.com\"}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/clientes",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenFuncionario}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Abrir conta A",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Conta A criada\u0027, function () { pm.response.to.have.status(201); });",
+                                                                                    "pm.collectionVariables.set(\u0027contaA\u0027, pm.response.json().numero);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"pin\":\"{{pin}}\",\"saldoInicial\":1000.00}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/clientes/{{clienteId}}/contas",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenFuncionario}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Abrir conta B",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Conta B criada\u0027, function () { pm.response.to.have.status(201); });",
+                                                                                    "pm.collectionVariables.set(\u0027contaB\u0027, pm.response.json().numero);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"pin\":\"{{pin}}\",\"saldoInicial\":0.00}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/clientes/{{clienteId}}/contas",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenFuncionario}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Depositar na conta A",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"valor\":250.00}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/contas/{{contaA}}/depositos",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenFuncionario}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Login cliente da conta A",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Login cliente responde 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const body = pm.response.json();",
+                                                                                    "pm.collectionVariables.set(\u0027tokenCliente\u0027, body.token);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"numeroConta\":\"{{contaA}}\",\"pin\":\"{{pin}}\"}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/login/cliente"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Transferir antes de alterar PIN (espera 403)",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027PIN inicial bloqueia transferência\u0027, function () { pm.response.to.have.status(403); });"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"contaOrigem\":\"{{contaA}}\",\"contaDestino\":\"{{contaB}}\",\"valor\":10.00,\"pin\":\"{{pin}}\"}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/transferencias",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenCliente}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Alterar PIN inicial",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"pinActual\":\"{{pin}}\",\"pinNovo\":\"{{pinNovo}}\"}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/contas/{{contaA}}/alterar-pin",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenCliente}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Transferir A para B",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"contaOrigem\":\"{{contaA}}\",\"contaDestino\":\"{{contaB}}\",\"valor\":100.00,\"pin\":\"{{pinNovo}}\"}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/transferencias",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenCliente}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Consultar movimentos da conta A",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/contas/{{contaA}}/movimentos?limite=20",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenCliente}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Login cliente da conta B",
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Login cliente B responde 200\u0027, function () { pm.response.to.have.status(200); });",
+                                                                                    "const body = pm.response.json();",
+                                                                                    "pm.collectionVariables.set(\u0027tokenClienteB\u0027, body.token);"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\"numeroConta\":\"{{contaB}}\",\"pin\":\"{{pin}}\"}"
+                                                               },
+                                                      "url":  "{{baseUrl}}/auth/login/cliente"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Consultar movimentos da conta B",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/contas/{{contaB}}/movimentos?limite=20",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenClienteB}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Bloquear conta B",
+                                      "request":  {
+                                                      "method":  "PATCH",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/contas/{{contaB}}/bloquear",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenFuncionario}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Transferir após bloquear destino (espera 409)",
+                                      "event":  [
+                                                    {
+                                                        "script":  {
+                                                                       "exec":  [
+                                                                                    "pm.test(\u0027Conta destino bloqueada impede transferência\u0027, function () { pm.response.to.have.status(409); });"
+                                                                                ],
+                                                                       "type":  "text/javascript"
+                                                                   },
+                                                        "listen":  "test"
+                                                    }
+                                                ],
+                                      "request":  {
+                                                      "url":  "{{baseUrl}}/transferencias",
+                                                      "method":  "POST",
+                                                      "body":  {
+                                                                   "raw":  "{\"contaOrigem\":\"{{contaA}}\",\"contaDestino\":\"{{contaB}}\",\"valor\":10.00,\"pin\":\"{{pinNovo}}\"}",
+                                                                   "mode":  "raw"
+                                                               },
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenCliente}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Auditoria",
+                     "item":  [
+                                  {
+                                      "name":  "Consultar eventos",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{baseUrl}}/auditoria?pagina=0\u0026tamanho=50",
+                                                      "auth":  {
+                                                                   "bearer":  [
+                                                                                  {
+                                                                                      "key":  "token",
+                                                                                      "type":  "string",
+                                                                                      "value":  "{{tokenFuncionario}}"
+                                                                                  }
+                                                                              ],
+                                                                   "type":  "bearer"
+                                                               }
+                                                  }
+                                  }
+                              ]
+                 }
+             ]
+}
