@@ -57,7 +57,6 @@ O MySQL precisa aceitar a criação dos bancos configurados ou eles devem ser cr
 
 ### Backend
 
-Configure os valores locais no arquivo, sem incluí-los no Git ou em mensagens compartilhadas:
 
 | Variável | Uso |
 |---|---|
