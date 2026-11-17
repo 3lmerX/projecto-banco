@@ -57,14 +57,6 @@ O MySQL precisa aceitar a criação dos bancos configurados ou eles devem ser cr
 
 ### Backend
 
-O VS Code carrega as variáveis de `microserviços/.env.local`. Crie esse arquivo a partir do exemplo somente se ele ainda não existir:
-
-```powershell
-if (-not (Test-Path 'microserviços/.env.local')) {
-  Copy-Item 'microserviços/.env.example' 'microserviços/.env.local'
-}
-```
-
 Configure os valores locais no arquivo, sem incluí-los no Git ou em mensagens compartilhadas:
 
 | Variável | Uso |
